@@ -1,0 +1,8 @@
+pymongo[srv]
+motor
+fastapi
+uvicorn
+retrying
+pillow
+python-dotenv
+python-multipart
