@@ -1,6 +1,5 @@
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 from src.logging.logger import logger
-from src.constants import MongoConstants
 from configs import MongoConfigs
 from retrying import retry
 
@@ -10,7 +9,7 @@ class MongoConnector:
     def __init__(self) -> None:
         try:
             self.cluster = AsyncIOMotorClient(MongoConfigs.mongo_srv)
-            self.database = self.cluster[MongoConstants.DB_NAME]
+            self.database = self.cluster[MongoConfigs.db_name]
         except Exception as e:
             logger.error(e)
 

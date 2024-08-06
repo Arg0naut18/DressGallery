@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from src.model.cloth import Cloth
 from src.connector.mongoConnector import MongoConnector
 from src.util.mongoUtil import MongoUtil
@@ -11,6 +12,16 @@ load_dotenv()
 app = FastAPI()
 db = MongoConnector()
 mongo_collection = db.get_collection("Clothes")
+origins = [
+    "*",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.post("/add_dress/")
@@ -31,19 +42,14 @@ async def view_dress(name: str = None, color: str = None, tags: list = None, max
     if color:
         filter_dict['color'] = color
     if tags:
-        filter_dict['tags'] = {"$all": tags}
+        filter_dict['tags'] = tags
     if max_age:
-        filter_dict['age'] = {"$lte": max_age}
+        filter_dict.update(
+            {"$or": [{"age": {"$lte": max_age}}, {"age": None}]})
     dresses = await MongoUtil.find(mongo_collection, filter_dict)
-    return {"StatusCode": 200, "Message": str(dresses)}
+    return {"StatusCode": 200, "Message": dresses}
 
 
 @app.put("/update_dress/{dress_id}")
 async def update_dress(dress_id: int, updates: dict):
     await MongoUtil.update(mongo_collection, {'id': dress_id}, updates)
-
-
-if __name__ == "__main__":
-    os.system("uvicorn app:app --port 8086 --reload")
-    os.chdir("gallery-ui")
-    os.system("npm start")

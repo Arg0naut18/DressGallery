@@ -9,7 +9,7 @@ class MongoUtil:
 
     @staticmethod
     async def find(collection: AsyncIOMotorCollection, data: dict = None, length=1000) -> List:
-        cursor = collection.find(data)
+        cursor = collection.find(data, {'_id': 0})
         return await cursor.to_list(length=length)
 
     @staticmethod
