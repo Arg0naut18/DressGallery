@@ -4,6 +4,7 @@ from src.connector.mongoConnector import MongoConnector
 from src.util.mongoUtil import MongoUtil
 from src.logging.logger import logger
 from dotenv import load_dotenv
+import os
 
 
 load_dotenv()
@@ -40,3 +41,9 @@ async def view_dress(name: str = None, color: str = None, tags: list = None, max
 @app.put("/update_dress/{dress_id}")
 async def update_dress(dress_id: int, updates: dict):
     await MongoUtil.update(mongo_collection, {'id': dress_id}, updates)
+
+
+if __name__ == "__main__":
+    os.system("uvicorn app:app --port 8086 --reload")
+    os.chdir("gallery-ui")
+    os.system("npm start")
