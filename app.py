@@ -11,7 +11,7 @@ import os
 load_dotenv()
 app = FastAPI()
 db = MongoConnector()
-mongo_collection = db.get_collection("Clothes")
+mongo_collection = db.get_collection()
 origins = [
     "*",
 ]

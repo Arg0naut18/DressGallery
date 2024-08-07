@@ -13,10 +13,5 @@ class MongoConnector:
         except Exception as e:
             logger.error(e)
 
-    def get_collection(self, name: str) -> AsyncIOMotorCollection:
+    def get_collection(self, name: str=MongoConfigs.mongo_collection) -> AsyncIOMotorCollection:
         return self.database[name]
-
-    @classmethod
-    def get_connector(cls):
-        cls.__init__()
-        return cls
