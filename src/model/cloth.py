@@ -1,7 +1,6 @@
 from pydantic import BaseModel, SkipValidation
 from typing import Optional
 from datetime import datetime
-from PIL.Image import Image
 
 
 class Cloth(BaseModel):

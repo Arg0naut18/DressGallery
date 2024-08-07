@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import DressForm from './DressForm';
 
 const Gallery = () => {
   const [clothes, setClothes] = useState([]);
@@ -17,29 +18,32 @@ const Gallery = () => {
     colorFilter: ''
   });
 
-  useEffect(() => {
-    const fetchClothes = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const params = new URLSearchParams();
-        if (searchTerm) params.append('name', searchTerm);
-        if (ageFilter) params.append('max_age', ageFilter);
-        if (colorFilter) params.append('color', colorFilter);
-        if (selectedTags.length > 0) params.append('tags', selectedTags.join(','));
-        const response = await fetch(`http://127.0.0.1:8000/view_dress?${params.toString()}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch clothes');
-        }
-        const data = await response.json();
-        setClothes(data.Message);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const [showForm, setShowForm] = useState(false);
 
+  const fetchClothes = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const params = new URLSearchParams();
+      if (searchTerm) params.append('name', searchTerm);
+      if (ageFilter) params.append('max_age', ageFilter);
+      if (colorFilter) params.append('color', colorFilter);
+      if (selectedTags.length > 0) params.append('tags', selectedTags.join(','));
+      let finalUrl = `http://127.0.0.1:${process.env.REACT_APP_BACKEND_PORT}/view_dress?${params.toString()}`;
+      const response = await fetch(finalUrl);
+      if (!response.ok) {
+        throw new Error('Failed to fetch clothes');
+      }
+      const data = await response.json();
+      setClothes(data);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchClothes();
   }, [filters]);
 
@@ -94,6 +98,10 @@ const Gallery = () => {
     });
   };
 
+  const toggleForm = () => {
+    setShowForm(!showForm);
+  };
+
   return (
     <div className="clothes-catalog">
       <h1 className='title'>Clothes Catalogue</h1>
@@ -137,14 +145,18 @@ const Gallery = () => {
           <div key={item.name} className="clothes-item">
             <img src={`data:image/jpeg;base64,${item.image}`} alt={item.name} />
             <h2>{item.name}</h2>
-            <p>{item.color}</p>
+            <p>Color: {item.color}</p>
             {item.brand && <p>{item.brand}</p>}
-            {item.tags && <p>{item.tags}</p>}
-            {item.age && <p>{item.age}</p>}
-            {item.purchased_date && <p>{item.purchased_date}</p>}
+            {item.tags?.map((tag) => (
+              <li>{tag}</li>
+            ))}
+            {item.age && <p>Age: {item.age}</p>}
+            {item.purchased_date && <p>Purchased Date: {item.purchased_date}</p>}
           </div>
         ))}
       </div>
+      <button className="floating-button" onClick={toggleForm}>+</button>
+      {showForm && <DressForm onClose={toggleForm} onSave={fetchClothes} />}
     </div>
   );
 };

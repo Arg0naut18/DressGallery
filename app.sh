@@ -1,9 +1,10 @@
-uvicorn app:app  --port 8086 --reload &
-pid backend=$!
+#!/bin/bash
+uvicorn app:app --port $REACT_APP_BACKEND_PORT --reload &
+backend=$!
 
 cd gallery-ui
 npm start &
-pid frontend=$!
+frontend=$!
 
 wait $backend
 wait $frontend
