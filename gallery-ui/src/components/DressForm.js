@@ -8,7 +8,9 @@ const AddClothForm = ({ onClose, onSave }) => {
   const [age, setAge] = useState('');
   const [brand, setBrand] = useState('');
   const [image, setImage] = useState(null);
-  const [selectedTags, setSelectedTags] = useState([]);
+  const [selectedTags, setSelectedTags] = useState('');
+
+  const tags = selectedTags.split(',').map(tag => tag.trim()).filter(tag => tag);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -20,8 +22,8 @@ const AddClothForm = ({ onClose, onSave }) => {
       params['image'] = image;
       if (age) params['age'] = age;
       if (brand) params['brand'] = brand;
-      if (selectedTags.length > 0) {
-        params['tags'] = selectedTags;
+      if (tags.length > 0) {
+        params['tags'] = tags;
       }
 
       let endpoint = `http://127.0.0.1:${process.env.REACT_APP_BACKEND_PORT}/add_dress`
@@ -32,7 +34,6 @@ const AddClothForm = ({ onClose, onSave }) => {
       });
 
       if (!response.ok) {
-        console.log(response.json())
         throw new Error('Failed to add cloth');
       }
 
@@ -90,7 +91,7 @@ const AddClothForm = ({ onClose, onSave }) => {
             <input type="text" value={color} onChange={(e) => setColor(e.target.value)} required />
           </label>
           <label>
-            Age:
+            Year Purchased:
             <input type="number" value={age} onChange={(e) => setAge(e.target.value)} />
           </label>
           <label>
@@ -101,20 +102,10 @@ const AddClothForm = ({ onClose, onSave }) => {
             Image:
             <input type="file" accept="image/*" onChange={handleImageChange} required />
           </label>
-          <div className="tags">
+          <label>
             Tags:
-            {tagsList.map((tag) => (
-              <label key={tag}>
-                <input
-                  type="checkbox"
-                  value={tag}
-                  checked={selectedTags.includes(tag)}
-                  onChange={handleTagChange}
-                />
-                {tag}
-              </label>
-            ))}
-          </div>
+            <input type="text" value={selectedTags} onChange={(e) => setSelectedTags(e.target.value)} />
+          </label>
           <button type="submit">Add Cloth</button>
           <button type="button" onClick={onClose}>Cancel</button>
         </form>

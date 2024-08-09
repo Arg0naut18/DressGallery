@@ -35,17 +35,19 @@ async def add_dress(cloth: Cloth):
 
 
 @app.get("/view_dress/")
-async def view_dress(name: str = None, color: str = None, tags: list = None, max_age: int = None):
+async def view_dress(name: str = None, color: str = None, tags: str = None, year_of_purchase: int = None, brand: str = None):
     filter_dict = {}
-    if name:
-        filter_dict['name'] = name
-    if color:
-        filter_dict['color'] = color
-    if tags:
-        filter_dict['tags'] = tags
-    if max_age:
+    if name and name.strip():
+        filter_dict['name'] = name.strip()
+    if color and color.strip():
+        filter_dict['color'] = color.strip()
+    if tags and tags.strip():
+        filter_dict['tags'] = {"$in": tags.split(',')}
+    if brand and brand.strip():
+        filter_dict['brand'] = brand
+    if year_of_purchase and year_of_purchase.strip():
         filter_dict.update(
-            {"$or": [{"age": {"$lte": max_age}}, {"age": None}]})
+            {"$or": [{"age": {"$gte": year_of_purchase}}, {"age": None}]})
     dresses = await MongoUtil.find(mongo_collection, filter_dict)
     return JSONResponse(content=dresses, status_code=200)
 

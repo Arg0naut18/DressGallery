@@ -7,9 +7,10 @@ const Gallery = () => {
   const [error, setError] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedTags, setSelectedTags] = useState([]);
+  const [selectedTags, setSelectedTags] = useState('');
   const [ageFilter, setAgeFilter] = useState('');
   const [colorFilter, setColorFilter] = useState('');
+  const [brandFilter, setBrandFilter] = useState('');
 
   const [filters, setFilters] = useState({
     searchTerm: '',
@@ -25,11 +26,14 @@ const Gallery = () => {
     setError(null);
     try {
       const params = new URLSearchParams();
-      if (searchTerm) params.append('name', searchTerm);
-      if (ageFilter) params.append('max_age', ageFilter);
-      if (colorFilter) params.append('color', colorFilter);
-      if (selectedTags.length > 0) params.append('tags', selectedTags.join(','));
+      params.append('name', filters.searchTerm);
+      params.append('color', filters.colorFilter);
+      if (filters.ageFilter) params.append('max_age', filters.ageFilter);
+      if (filters.brandFilter) params.append('brand', filters.brandFilter);
+      if (filters.selectedTags) params.append('tags', filters.selectedTags);
+
       let finalUrl = `http://127.0.0.1:${process.env.REACT_APP_BACKEND_PORT}/view_dress?${params.toString()}`;
+
       const response = await fetch(finalUrl);
       if (!response.ok) {
         throw new Error('Failed to fetch clothes');
@@ -60,12 +64,7 @@ const Gallery = () => {
   };
 
   const handleTagChange = (event) => {
-    const tag = event.target.value;
-    setSelectedTags((prevTags) =>
-      prevTags.includes(tag)
-        ? prevTags.filter((t) => t !== tag)
-        : [...prevTags, tag]
-    );
+    setSelectedTags(event.target.value);
   };
 
   const handleAgeChange = (event) => {
@@ -76,25 +75,32 @@ const Gallery = () => {
     setColorFilter(event.target.value);
   };
 
+  const handleBrandChange = (event) => {
+    setBrandFilter(event.target.value);
+  };
+
   const applyFilters = () => {
     setFilters({
       searchTerm,
       selectedTags,
       ageFilter,
-      colorFilter
+      colorFilter,
+      brandFilter
     });
   };
 
   const resetFilters = () => {
     setSearchTerm('');
-    setSelectedTags([]);
+    setSelectedTags('');
     setAgeFilter('');
     setColorFilter('');
+    setBrandFilter('');
     setFilters({
       searchTerm: '',
-      selectedTags: [],
+      selectedTags: '',
       ageFilter: '',
-      colorFilter: ''
+      colorFilter: '',
+      brandFilter: ''
     });
   };
 
@@ -106,6 +112,7 @@ const Gallery = () => {
     <div className="clothes-catalog">
       <h1 className='title'>Clothes Catalogue</h1>
       <div className="filters">
+        Name:
         <input
           type="text"
           placeholder="Search by name"
@@ -113,13 +120,15 @@ const Gallery = () => {
           value={searchTerm}
           onChange={handleSearchChange}
         />
+        Year Purchased:
         <input
           type="number"
-          placeholder="Age (in months)"
+          placeholder="Year"
           className='age-search'
           value={ageFilter}
           onChange={handleAgeChange}
         />
+        Color:
         <input
           type="text"
           placeholder="Color"
@@ -127,15 +136,23 @@ const Gallery = () => {
           value={colorFilter}
           onChange={handleColorChange}
         />
+        Brand:
+        <input
+          type="text"
+          placeholder="Brand"
+          className='brand-search'
+          value={brandFilter}
+          onChange={handleBrandChange}
+        />
+        Tags:
         <div className="tags">
-          <label>
-            <input type="checkbox" value="quirky" className="checkbox" onChange={handleTagChange} />
-            Quirky
-          </label>
-          <label>
-            <input type="checkbox" value="summer" className="checkbox" onChange={handleTagChange} />
-            Summer
-          </label>
+        <input
+          type="text"
+          placeholder="Tags separated by ,"
+          className='tags-search'
+          value={selectedTags}
+          onChange={handleTagChange}
+        />
         </div>
         <button onClick={applyFilters}>Apply Filters</button>
         <button onClick={resetFilters}>Reset Filters</button>
@@ -146,12 +163,12 @@ const Gallery = () => {
             <img src={`data:image/jpeg;base64,${item.image}`} alt={item.name} />
             <h2>{item.name}</h2>
             <p>Color: {item.color}</p>
-            {item.brand && <p>{item.brand}</p>}
-            {item.tags?.map((tag) => (
-              <li>{tag}</li>
-            ))}
+            {item.brand && <p>Brand: {item.brand}</p>}
             {item.age && <p>Age: {item.age}</p>}
             {item.purchased_date && <p>Purchased Date: {item.purchased_date}</p>}
+            {item.tags?.slice(0, 5).map((tag) => (
+              <p key={tag}>{tag}</p>
+            ))}
           </div>
         ))}
       </div>
