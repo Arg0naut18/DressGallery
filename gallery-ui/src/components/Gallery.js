@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DressForm from './DressForm';
+import DressUpdateForm from './DressUpdateForm'
+
 
 const Gallery = () => {
   const [clothes, setClothes] = useState([]);
@@ -12,14 +14,16 @@ const Gallery = () => {
   const [colorFilter, setColorFilter] = useState('');
   const [brandFilter, setBrandFilter] = useState('');
 
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isUpdateMode, setIsUpdateMode] = useState(false);
+  const [clothToEdit, setClothToEdit] = useState(null);
+
   const [filters, setFilters] = useState({
     searchTerm: '',
     selectedTags: [],
     ageFilter: '',
     colorFilter: ''
   });
-
-  const [showForm, setShowForm] = useState(false);
 
   const fetchClothes = async () => {
     setLoading(true);
@@ -104,13 +108,28 @@ const Gallery = () => {
     });
   };
 
-  const toggleForm = () => {
-    setShowForm(!showForm);
+  const handleFormSave = () => {
+    fetchClothes(); // Refresh the gallery after saving
+    setIsFormOpen(false);
+    setIsUpdateMode(false);
+    setClothToEdit(null);
+  };
+
+  const handleOpenForm = () => {
+    setIsFormOpen(true);
+    setIsUpdateMode(false);
+    setClothToEdit(null);
+  };
+
+  const handleUpdate = (cloth) => {
+    setIsFormOpen(true);
+    setIsUpdateMode(true);
+    setClothToEdit(cloth); // Set the cloth to be edited
   };
 
   return (
     <div className="clothes-catalog">
-      <h1 className='title'>Clothes Catalogue</h1>
+      <h1 className='title'>Outfit Wardrobe</h1>
       <div className="filters">
         Name:
         <input
@@ -159,21 +178,35 @@ const Gallery = () => {
       </div>
       <div className="clothes-grid">
         {clothes.map((item) => (
-          <div key={item.name} className="clothes-item">
+          <div key={item._id} className="clothes-item">
             <img src={`data:image/jpeg;base64,${item.image}`} alt={item.name} />
             <h2>{item.name}</h2>
             <p>Color: {item.color}</p>
             {item.brand && <p>Brand: {item.brand}</p>}
             {item.age && <p>Age: {item.age}</p>}
             {item.purchased_date && <p>Purchased Date: {item.purchased_date}</p>}
-            {item.tags?.slice(0, 5).map((tag) => (
+            {item.tags?.slice(0, 3).map((tag) => (
               <p key={tag}>{tag}</p>
             ))}
+            <button className="update-button" onClick={() => handleUpdate(item)}>Update</button>
           </div>
         ))}
       </div>
-      <button className="floating-button" onClick={toggleForm}>+</button>
-      {showForm && <DressForm onClose={toggleForm} onSave={fetchClothes} />}
+      <button className="floating-button" onClick={handleOpenForm}>+</button>
+      {isFormOpen && (
+        isUpdateMode ? (
+          <DressUpdateForm
+            onClose={() => setIsFormOpen(false)}
+            onSave={handleFormSave}
+            cloth={clothToEdit} // Pass the cloth to be edited
+          />
+        ) : (
+          <DressForm
+            onClose={() => setIsFormOpen(false)}
+            onSave={handleFormSave}
+          />
+        )
+      )}
     </div>
   );
 };

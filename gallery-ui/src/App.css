@@ -25,25 +25,22 @@ body {
 .clothes-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 50px;
+  gap: 30px;
   justify-content: left;
-  border: 2px solid #2b45bb;
   border-radius: 8px;
-  border-width: 100% 100% 100% 100%;
-  border-spacing: 5px;
 }
 
 .clothes-item {
-  border: 2px solid #2b45bb;
   border-radius: 8px;
-  padding: 10px;
+  padding: 20px;
   max-width: 200px;
+  border: 1px solid #c8300e;
 }
 
 .clothes-item img {
   width: 200px;
   height: 300px;
-  border-bottom: 1px solid #ddd;
+  border: 2px solid #ddd;
   margin-bottom: 10px;
 }
 
@@ -106,7 +103,7 @@ body {
   z-index: 1000;
 }
 
-.add-cloth-form-overlay {
+.cloth-form-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -119,7 +116,7 @@ body {
   z-index: 1000;
 }
 
-.add-cloth-form {
+.form-container {
   background: rgb(33, 20, 20);
   padding: 20px;
   border-radius: 8px;
@@ -128,22 +125,22 @@ body {
   color: white;
 }
 
-.add-cloth-form h2 {
+.form-container h2 {
   margin-top: 0;
 }
 
-.add-cloth-form form {
+.form-container form {
   display: flex;
   flex-direction: column;
 }
 
-.add-cloth-form form label {
+.form-container form label {
   margin-bottom: 10px;
 }
 
-.add-cloth-form form input[type="text"],
-.add-cloth-form form input[type="number"],
-.add-cloth-form form input[type="file"] {
+.form-container form input[type="text"],
+.form-container form input[type="number"],
+.form-container form input[type="file"] {
   padding: 8px;
   font-size: 14px;
   margin-top: 5px;
@@ -151,21 +148,21 @@ body {
   height: auto;
 }
 
-.add-cloth-form form button {
+.form-container form button {
   padding: 10px;
   font-size: 14px;
   cursor: pointer;
   margin-top: 10px;
 }
 
-.add-cloth-form form button[type="submit"] {
+.form-container form button[type="submit"] {
   background-color: #007bff;
   color: white;
   border: none;
   border-radius: 4px;
 }
 
-.add-cloth-form form button[type="button"] {
+.form-container form button[type="button"] {
   background-color: #ccc;
   border: none;
   border-radius: 4px;

@@ -6,6 +6,7 @@ from src.connector.mongoConnector import MongoConnector
 from src.util.mongoUtil import MongoUtil
 from src.logging.logger import logger
 from dotenv import load_dotenv
+from bson import ObjectId
 
 
 load_dotenv()
@@ -53,6 +54,8 @@ async def view_dress(name: str = None, color: str = None, tags: str = None, year
 
 
 @app.put("/update_dress/{dress_id}")
-async def update_dress(dress_id: int, updates: dict):
-    await MongoUtil.update(mongo_collection, {'id': dress_id}, updates)
+async def update_dress(dress_id: str, cloth: Cloth):
+    print(dress_id)
+    print(cloth)
+    await MongoUtil.update(mongo_collection, {'_id': ObjectId(dress_id)}, cloth.__dict__)
     return JSONResponse(status_code=200, content="Success!")

@@ -9,8 +9,11 @@ class MongoUtil:
 
     @staticmethod
     async def find(collection: AsyncIOMotorCollection, data: dict = None, length=1000) -> List:
-        cursor = collection.find(data, {'_id': 0})
-        return await cursor.to_list(length=length)
+        cursor = collection.find(data)
+        elems = await cursor.to_list(length=length)
+        for elem in elems:
+            elem['_id'] = str(elem['_id'])
+        return elems
 
     @staticmethod
     async def update(collection: AsyncIOMotorCollection, identifier: dict, data: dict):

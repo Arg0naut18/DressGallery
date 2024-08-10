@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
-const tagsList = ['quirky', 'summer', 'hoodie'];
-
+/* eslint-disable react/prop-types */
 const AddClothForm = ({ onClose, onSave }) => {
   const [name, setName] = useState('');
   const [color, setColor] = useState('');
@@ -26,7 +25,7 @@ const AddClothForm = ({ onClose, onSave }) => {
         params['tags'] = tags;
       }
 
-      let endpoint = `http://127.0.0.1:${process.env.REACT_APP_BACKEND_PORT}/add_dress`
+      let endpoint = `http://127.0.0.1:${process.env.REACT_APP_BACKEND_PORT}/add_dress`;
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'content-type': 'application/json' , 'Accept': 'application/json' },
@@ -68,19 +67,10 @@ const AddClothForm = ({ onClose, onSave }) => {
     });
   };
 
-  const handleTagChange = (event) => {
-    const tag = event.target.value;
-    setSelectedTags((prevTags) =>
-      prevTags.includes(tag)
-        ? prevTags.filter((t) => t !== tag)
-        : [...prevTags, tag]
-    );
-  };
-
   return (
-    <div className="add-cloth-form-overlay">
-      <div className="add-cloth-form">
-        <h2>Add New Cloth</h2>
+    <div className="cloth-form-overlay">
+      <div className="form-container">
+        <h2>Add New Garment</h2>
         <form onSubmit={handleSubmit}>
           <label>
             Name:
