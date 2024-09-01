@@ -1,10 +1,12 @@
 from motor.motor_asyncio import AsyncIOMotorCollection
 from typing import List, Dict
+from src.logging.logger import logger
 
 
 class MongoUtil:
     @staticmethod
     async def insert(collection: AsyncIOMotorCollection, data: Dict):
+        logger.info(data)
         await collection.insert_one(data)
 
     @staticmethod

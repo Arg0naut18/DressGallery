@@ -41,6 +41,7 @@ const Gallery = () => {
       if (filters.selectedTags.length>0) params.append('tags', filters.selectedTags);
 
       let finalUrl = `http://127.0.0.1:${process.env.REACT_APP_BACKEND_PORT}/outfit/view?${params.toString()}`;
+      console.log(finalUrl);
 
       const response = await fetch(finalUrl, {
         headers: {

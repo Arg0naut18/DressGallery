@@ -8,20 +8,27 @@ import os
 from src.logging.logger import logger
 
 router = APIRouter()
-error_log = lambda e: f"Error occurred! \n{e}"
+def error_log(e): return f"Error occurred:\t{e}"
+
+
 mongo_collection = db.get_collection(os.environ["MONGO_OUTFIT_COLLECTION"])
 user_collection = db.get_collection(os.environ["MONGO_USER_COLLECTION"])
+
 
 async def get_current_user(request: Request):
     user_id = request.headers.get('X-User-ID')
     found_users = await MongoUtil.find(user_collection, {"user_id": user_id})
-    if not user_id or len(found_users)!=1:
+    if not user_id or len(found_users) != 1:
         raise HTTPException(status_code=401, detail="Unauthorized")
     return user_id
 
+def print_cloth(cloth: Cloth, user_id):
+    updated_dress = cloth.model_dump()
+    logger.info(str((str(updated_dress), user_id)))
+
 
 def format_inputs(name, color, tags, brand, year_of_purchase, user_id):
-    filter_dict = {"UserId": user_id}
+    filter_dict = {"user_id": user_id}
     if name and name.strip():
         filter_dict['name'] = name.strip()
     if color and color.strip():
@@ -35,10 +42,11 @@ def format_inputs(name, color, tags, brand, year_of_purchase, user_id):
             {"$or": [{"purchased_year": {"$gte": year_of_purchase}}, {"purchased_year": None}]})
     return filter_dict
 
+
 @router.post("/add/")
-async def add_dress(cloth: Cloth, user_id: str=Depends(get_current_user)):
+async def add_dress(cloth: Cloth, user_id: str = Depends(get_current_user, use_cache=True)):
     try:
-        cloth.__setattr__("userId", user_id)
+        cloth.user_id = user_id
         await MongoUtil.insert(mongo_collection, cloth.model_dump())
         return JSONResponse(status_code=201, content="Success!")
     except Exception as e:
@@ -47,8 +55,9 @@ async def add_dress(cloth: Cloth, user_id: str=Depends(get_current_user)):
 
 
 @router.get("/view/")
-async def view_dress(name: str = None, color: str = None, tags: str = None, year_of_purchase: int = None, brand: str = None, user_id: str = Depends(get_current_user)):
-    filter_dict = format_inputs(name, color, tags, brand, year_of_purchase, user_id)
+async def view_dress(name: str = None, color: str = None, tags: str = None, year_of_purchase: int = None, brand: str = None, user_id: str = Depends(get_current_user, use_cache=True)):
+    filter_dict = format_inputs(
+        name, color, tags, brand, year_of_purchase, user_id)
     try:
         dresses = await MongoUtil.find(mongo_collection, filter_dict)
         return JSONResponse(content=dresses, status_code=200)
@@ -60,7 +69,6 @@ async def view_dress(name: str = None, color: str = None, tags: str = None, year
 @router.put("/update/{dress_id}")
 async def update_dress(dress_id: str, cloth: Cloth, user_id: str = Depends(get_current_user)):
     updated_dress = cloth.model_dump()
-    print(updated_dress)
     try:
         await MongoUtil.update(mongo_collection, {'_id': ObjectId(dress_id)}, updated_dress)
         return JSONResponse(status_code=200, content="Success!")

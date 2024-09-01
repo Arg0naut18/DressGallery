@@ -6,7 +6,7 @@ class Cloth(BaseModel):
     name: str
     color: str
     image: str
-    userId: str
+    user_id: str
     tags: Optional[list] = None
     purchased_year: Optional[int] = None
     brand: Optional[str] = None

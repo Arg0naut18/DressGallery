@@ -23,8 +23,12 @@ const AddClothForm = ({ onClose, onSave }) => {
       if (age) params['purchased_year'] = age;
       if (brand) params['brand'] = brand.toLowerCase();
       if (tags.length > 0) {
-        params['tags'] = tags.toLowerCase();
+        for (let index = 0; index < tags.length; index++) {
+          tags[index] = tags[index].toLowerCase();
+        }
+        params['tags'] = tags;
       }
+      params['user_id'] = userId;
 
       let endpoint = `http://127.0.0.1:${process.env.REACT_APP_BACKEND_PORT}/outfit/add`;
       const response = await fetch(endpoint, {

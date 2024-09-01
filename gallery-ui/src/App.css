@@ -206,3 +206,69 @@ body {
   border: none;
   border-radius: 4px;
 }
+
+.login-form {
+  display: grid;
+  margin-bottom: 20px;
+  font-size: 26px;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-block input {
+  padding: 8px;
+  font-size: 14px;
+  margin-top: 5px;
+  width: 180px;
+  height: auto;
+}
+
+.login-block button{
+  padding: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100px;
+  align-self: center;
+}
+
+.register-block {
+  display: grid;
+  justify-content:center;
+  margin-bottom: 20px;
+  font-size: 26px;
+}
+
+.register-block button {
+  padding: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 200px;
+  margin-left: 90px;
+}
+
+.register-form {
+  display: grid;
+  margin-bottom: 20px;
+  font-size: 26px;
+  align-items: center;
+  justify-content: center;
+}
+
+.register-form input {
+  padding: 8px;
+  font-size: 14px;
+  margin-top: 5px;
+  width: 180px;
+  height: auto;
+}
+
+.register-form button {
+  padding: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100px;
+  align-self: center;
+}

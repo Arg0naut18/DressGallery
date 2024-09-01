@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.routers.cloth_router import router as cloth_router
 from src.routers.user_router import router as user_router
 from dotenv import load_dotenv
-import os
+from src.logging.logger import logger
 
 
 load_dotenv()
@@ -20,3 +20,4 @@ app.add_middleware(
 )
 app.include_router(cloth_router, prefix="/outfit")
 app.include_router(user_router, prefix="/auth")
+logger.debug("Started!")
