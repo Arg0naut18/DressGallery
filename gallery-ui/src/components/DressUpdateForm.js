@@ -28,7 +28,7 @@ const UpdateClothForm = ({ onClose, onSave, cloth }) => {
       const params = {};
       params['name'] = name;
       params['color'] = color;
-      if (age) params['age'] = age;
+      if (age) params['purchased_year'] = age;
       if (brand) params['brand'] = brand;
       if (tags.length > 0) {
         params['tags'] = tags;
@@ -36,12 +36,15 @@ const UpdateClothForm = ({ onClose, onSave, cloth }) => {
       if (image) {
         params['image'] = image;
       }
+      const userId = localStorage.getItem("userId");
 
-      const url = `http://127.0.0.1:${process.env.REACT_APP_BACKEND_PORT}/update_dress/${cloth._id}`;
+      const url = `http://127.0.0.1:${process.env.REACT_APP_BACKEND_PORT}/outfit/update/${cloth._id}`;
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-User-ID': userId
         },
         body: JSON.stringify(params)
       });
@@ -56,15 +59,26 @@ const UpdateClothForm = ({ onClose, onSave, cloth }) => {
     }
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImage(reader.result.split(',')[1]);
-    };
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
     if (file) {
-      reader.readAsDataURL(file);
+      getBase64(file)
+        .then((base64Image) => {
+          setImage(base64Image);
+        })
+        .catch((error) => {
+          console.error('Error converting image to base64:', error);
+        });
     }
+  };
+
+  const getBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = (error) => reject(error);
+    });
   };
 
   return (
@@ -81,7 +95,7 @@ const UpdateClothForm = ({ onClose, onSave, cloth }) => {
                 <input type="text" value={color} onChange={(e) => setColor(e.target.value)} required />
                 </div>
                 <div>
-                <label>Age:</label>
+                <label>Year Purchased:</label>
                 <input type="text" value={age} onChange={(e) => setAge(e.target.value)} />
                 </div>
                 <div>

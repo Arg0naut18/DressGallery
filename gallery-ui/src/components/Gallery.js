@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import DressForm from './DressForm';
 import DressUpdateForm from './DressUpdateForm'
+import { FaPencilAlt, FaTrash } from 'react-icons/fa';
+
 
 
 const Gallery = () => {
@@ -18,6 +20,8 @@ const Gallery = () => {
   const [isUpdateMode, setIsUpdateMode] = useState(false);
   const [clothToEdit, setClothToEdit] = useState(null);
 
+  const userId = localStorage.getItem("userId");
+
   const [filters, setFilters] = useState({
     searchTerm: '',
     selectedTags: [],
@@ -30,15 +34,18 @@ const Gallery = () => {
     setError(null);
     try {
       const params = new URLSearchParams();
-      params.append('name', filters.searchTerm);
-      params.append('color', filters.colorFilter);
-      if (filters.ageFilter) params.append('max_age', filters.ageFilter);
-      if (filters.brandFilter) params.append('brand', filters.brandFilter);
-      if (filters.selectedTags) params.append('tags', filters.selectedTags);
+      if(filters.searchTerm && filters.searchTerm!=='') params.append('name', filters.searchTerm.toLowerCase());
+      if(filters.colorFilter && filters.colorFilter!=='') params.append('color', filters.colorFilter.toLowerCase());
+      if (filters.ageFilter) params.append('purchased_year', filters.ageFilter);
+      if (filters.brandFilter) params.append('brand', filters.brandFilter.toLowerCase());
+      if (filters.selectedTags.length>0) params.append('tags', filters.selectedTags);
 
-      let finalUrl = `http://127.0.0.1:${process.env.REACT_APP_BACKEND_PORT}/view_dress?${params.toString()}`;
+      let finalUrl = `http://127.0.0.1:${process.env.REACT_APP_BACKEND_PORT}/outfit/view?${params.toString()}`;
 
-      const response = await fetch(finalUrl);
+      const response = await fetch(finalUrl, {
+        headers: {
+          'X-User-ID': userId
+      }});
       if (!response.ok) {
         throw new Error('Failed to fetch clothes');
       }
@@ -127,6 +134,26 @@ const Gallery = () => {
     setClothToEdit(cloth); // Set the cloth to be edited
   };
 
+  const handleDelete = async (clothId) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this outfit from the wardrobe?");
+    if (!confirmDelete) {
+      return;
+    }
+    const response = await fetch(`http://127.0.0.1:${process.env.REACT_APP_BACKEND_PORT}/outfit/delete/${clothId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-User-ID': userId
+      }
+    });
+
+    if (response.ok) {
+      fetchClothes();
+    } else {
+      alert('Failed to delete the item.');
+    }
+  };
+
   return (
     <div className="clothes-catalog">
       <h1 className='title'>Outfit Wardrobe</h1>
@@ -183,12 +210,12 @@ const Gallery = () => {
             <h2>{item.name}</h2>
             <p>Color: {item.color}</p>
             {item.brand && <p>Brand: {item.brand}</p>}
-            {item.age && <p>Age: {item.age}</p>}
-            {item.purchased_date && <p>Purchased Date: {item.purchased_date}</p>}
+            {item.purchased_year && <p>Year Purchased: {item.purchased_year}</p>}
             {item.tags?.slice(0, 3).map((tag) => (
               <p key={tag}>{tag}</p>
             ))}
-            <button className="update-button" onClick={() => handleUpdate(item)}>Update</button>
+            <button className="update-button" onClick={() => handleUpdate(item)}><FaPencilAlt /></button>
+            <button className="delete-button" onClick={() => handleDelete(item._id)}><FaTrash /></button>
           </div>
         ))}
       </div>

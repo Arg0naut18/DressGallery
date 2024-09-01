@@ -1,15 +1,14 @@
-from pydantic import BaseModel, SkipValidation
+from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime
 
 
 class Cloth(BaseModel):
     name: str
     color: str
     image: str
+    userId: str
     tags: Optional[list] = None
-    age: Optional[int] = None
-    purchased_date: Optional[datetime] = None
+    purchased_year: Optional[int] = None
     brand: Optional[str] = None
 
     class Config:

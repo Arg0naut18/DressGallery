@@ -10,25 +10,26 @@ const AddClothForm = ({ onClose, onSave }) => {
   const [selectedTags, setSelectedTags] = useState('');
 
   const tags = selectedTags.split(',').map(tag => tag.trim()).filter(tag => tag);
+  const userId = localStorage.getItem('userId');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
       const params = {};
-      params['name'] = name;
-      params['color'] = color;
-      params['image'] = image;
-      if (age) params['age'] = age;
-      if (brand) params['brand'] = brand;
+      params['name'] = name.toLowerCase();
+      params['color'] = color.toLowerCase();
+      params['image'] = image.toLowerCase();
+      if (age) params['purchased_year'] = age;
+      if (brand) params['brand'] = brand.toLowerCase();
       if (tags.length > 0) {
-        params['tags'] = tags;
+        params['tags'] = tags.toLowerCase();
       }
 
-      let endpoint = `http://127.0.0.1:${process.env.REACT_APP_BACKEND_PORT}/add_dress`;
+      let endpoint = `http://127.0.0.1:${process.env.REACT_APP_BACKEND_PORT}/outfit/add`;
       const response = await fetch(endpoint, {
         method: 'POST',
-        headers: { 'content-type': 'application/json' , 'Accept': 'application/json' },
+        headers: { 'content-type': 'application/json' , 'Accept': 'application/json', 'X-User-ID': userId },
         body: JSON.stringify(params)
       });
 

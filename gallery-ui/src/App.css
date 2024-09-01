@@ -31,10 +31,49 @@ body {
 }
 
 .clothes-item {
+  text-transform: capitalize;
   border-radius: 8px;
   padding: 20px;
-  max-width: 200px;
   border: 1px solid #c8300e;
+  position: 10px;
+  margin: 20px;
+  transition: transform 0.2s ease-in-out;
+  box-sizing: border-box;
+}
+
+.clothes-item:hover {
+  transform: scale(1.05);
+}
+
+.update-button, .delete-button {
+  position: absolute;
+  border-radius: 50%;
+  padding: 5px;
+  cursor: pointer;
+  display: none;
+  font-size: 18px;
+  border: 1px solid #ddd;
+  z-index: 10; /* Ensure it appears above the item border */
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2); /* Optional: slight shadow to give depth */
+}
+
+.update-button {
+  top: -10px; /* Adjusted to be exactly on the top border */
+  right: -10px; /* Adjusted to be exactly on the right border */
+  background: #aec9ec; /* Optional: white background to match the item’s color */
+  color: #333;
+}
+
+.delete-button {
+  top: 40px; /* Position it just below the update button */
+  right: -10px;
+  background: #c47b6a;
+  color: rgb(23, 19, 19);
+}
+
+.clothes-item:hover .update-button,
+.clothes-item:hover .delete-button {
+  display: block;
 }
 
 .clothes-item img {

@@ -6,3 +6,4 @@ retrying
 pillow
 python-dotenv
 python-multipart
+Werkzeug
