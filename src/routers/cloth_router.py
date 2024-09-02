@@ -22,10 +22,6 @@ async def get_current_user(request: Request):
         raise HTTPException(status_code=401, detail="Unauthorized")
     return user_id
 
-def print_cloth(cloth: Cloth, user_id):
-    updated_dress = cloth.model_dump()
-    logger.info(str((str(updated_dress), user_id)))
-
 
 def format_inputs(name, color, tags, brand, year_of_purchase, user_id):
     filter_dict = {"user_id": user_id}

@@ -7,6 +7,7 @@ import os
 import uuid
 from src.logging import logger
 from werkzeug.security import generate_password_hash, check_password_hash
+from src.constants import UserUUIDConfig
 
 
 router = APIRouter()
@@ -18,7 +19,7 @@ users_collection = db.get_collection(os.environ["MONGO_USER_COLLECTION"])
 
 @router.post("/register/")
 async def register_user(user: User):
-    user_id = str(uuid.uuid4())
+    user_id = str(uuid.uuid5(UserUUIDConfig.NAMESPACE+str(uuid.uuid4()), user.username))
     hashed_password = generate_password_hash(user.password)
 
     updated_user = User(user_id=user_id, password=hashed_password,
@@ -37,13 +38,10 @@ async def authenticate_user(user: UserData):
     try:
         users = await MongoUtil.find(
             users_collection, curr_user.model_dump(exclude_unset=True, exclude_none=True))
-        logger.info(str(users))
         user_found = (len(users) > 0)
         if not user_found:
             return JSONResponse(status_code=402, content="User not found!")
-        logger.info(str(users))
         for iter_user in users:
-            logger.info(f"iter_user {iter_user}")
             if check_password_hash(iter_user["password"], user.password):
                 return JSONResponse(status_code=200, content=iter_user["user_id"])
         return JSONResponse(status_code=402, content="User not found!")

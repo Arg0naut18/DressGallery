@@ -6,7 +6,6 @@ from src.logging import logger
 class MongoUtil:
     @staticmethod
     async def insert(collection: AsyncIOMotorCollection, data: Dict):
-        logger.info(data)
         await collection.insert_one(data)
 
     @staticmethod
