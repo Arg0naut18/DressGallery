@@ -1,6 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorCollection
 from typing import List, Dict
-from src.logging.logger import logger
+from src.logging import logger
 
 
 class MongoUtil:

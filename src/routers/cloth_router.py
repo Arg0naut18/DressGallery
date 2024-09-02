@@ -5,7 +5,7 @@ from src.model.cloth import Cloth
 from src.connector import db
 from bson import ObjectId
 import os
-from src.logging.logger import logger
+from src.logging import logger
 
 router = APIRouter()
 def error_log(e): return f"Error occurred:\t{e}"

@@ -1,5 +1,5 @@
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
-from src.logging.logger import logger
+from src.logging import logger
 from configs import MongoConfigs
 from retrying import retry
 

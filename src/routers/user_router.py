@@ -5,7 +5,7 @@ from src.model.user import User, UserData
 from src.connector import db
 import os
 import uuid
-from src.logging.logger import logger
+from src.logging import logger
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
