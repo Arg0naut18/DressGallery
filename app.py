@@ -26,5 +26,5 @@ logger.info('Started!')
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host=os.getenv('HOST', '127.0.0.1'),
+    uvicorn.run(app, host=os.getenv('HOST', '0.0.0.0'),
                 port=int(os.getenv('PORT', 8000)), env_file=".env", use_colors=True, log_config=logger_config)
