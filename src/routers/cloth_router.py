@@ -81,3 +81,8 @@ async def delete_dress(dress_id: str, user_id: str = Depends(get_current_user)):
     except Exception as e:
         logger.error(error_log(e))
         return JSONResponse(status_code=400, content=error_log(e))
+
+
+@router.get("/ping")
+async def ping():
+    return JSONResponse(content="Cloth Ping successful!", status_code=200)

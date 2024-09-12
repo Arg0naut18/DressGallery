@@ -8,6 +8,8 @@ services:
       - ./DressGalleryUI/.env
     depends_on:
       - api-server
+    networks:
+      - cloth-gallery
 
   api-server:
     build:
@@ -16,3 +18,9 @@ services:
       - "${PORT:-8000}:${PORT:-8000}"
     env_file:
       - ./.env
+    networks:
+      - cloth-gallery
+
+networks:
+  cloth-gallery:
+    driver: bridge

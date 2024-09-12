@@ -19,7 +19,8 @@ users_collection = db.get_collection(os.environ["MONGO_USER_COLLECTION"])
 
 @router.post("/register/")
 async def register_user(user: User):
-    user_id = str(uuid.uuid5(UserUUIDConfig.NAMESPACE+str(uuid.uuid4()), user.username))
+    user_id = str(uuid.uuid5(UserUUIDConfig.NAMESPACE +
+                  str(uuid.uuid4()), user.username))
     hashed_password = generate_password_hash(user.password)
 
     updated_user = User(user_id=user_id, password=hashed_password,
@@ -48,3 +49,8 @@ async def authenticate_user(user: UserData):
     except Exception as e:
         logger.error(error_log(e))
         return JSONResponse(status_code=500, content=error_log(e))
+
+
+@router.get("/ping")
+async def ping():
+    return JSONResponse(content="User Ping successful!", status_code=200)
