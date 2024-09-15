@@ -3,6 +3,7 @@ from typing import List, Dict
 from src.logging import logger
 from datetime import datetime
 import pytz
+import json
 
 
 class MongoUtil:
@@ -20,6 +21,8 @@ class MongoUtil:
         for elem in elems:
             if '_id' in elem:
                 elem['_id'] = str(elem['_id'])
+            if 'Timestamp' in elem:
+                elem['Timestamp'] = json.dumps(elem['Timestamp'], default=str)
         return elems
 
     @staticmethod
