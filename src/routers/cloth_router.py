@@ -69,7 +69,7 @@ async def update_dress(dress_id: str, cloth: Cloth, user_id: str = Depends(get_c
     logger.info("An update outfit request received.")
     updated_dress = cloth.model_dump()
     try:
-        await MongoUtil.update(mongo_collection, {'_id': ObjectId(dress_id)}, updated_dress)
+        await MongoUtil.update(mongo_collection, {'_id': ObjectId(dress_id), "user_id": user_id}, updated_dress)
         return JSONResponse(status_code=200, content="Success!")
     except Exception as e:
         logger.error(error_log(e))
@@ -80,7 +80,7 @@ async def update_dress(dress_id: str, cloth: Cloth, user_id: str = Depends(get_c
 async def delete_dress(dress_id: str, user_id: str = Depends(get_current_user)):
     logger.info("A delete outfit request received.")
     try:
-        await MongoUtil.delete(mongo_collection, {'_id': ObjectId(dress_id)})
+        await MongoUtil.delete(mongo_collection, {'_id': ObjectId(dress_id), "user_id": user_id})
         return JSONResponse(status_code=200, content="Deleted successfully!")
     except Exception as e:
         logger.error(error_log(e))

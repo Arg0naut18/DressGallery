@@ -29,7 +29,7 @@ class MongoUtil:
     async def update(collection: AsyncIOMotorCollection, identifier: Dict, data: Dict):
         logger.info("Updating Data")
         data['Timestamp'] = datetime.now(tz=pytz.timezone('Asia/Calcutta'))
-        await collection.update_one(filter=identifier, update=data)
+        await collection.replace_one(filter=identifier, replacement=data)
 
     @staticmethod
     async def delete(collection: AsyncIOMotorCollection, identifier: Dict):
