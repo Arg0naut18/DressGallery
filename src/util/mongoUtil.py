@@ -1,12 +1,15 @@
 from motor.motor_asyncio import AsyncIOMotorCollection
 from typing import List, Dict
 from src.logging import logger
+from datetime import datetime
+import pytz
 
 
 class MongoUtil:
     @staticmethod
     async def insert(collection: AsyncIOMotorCollection, data: Dict):
         logger.info("Inserting Data")
+        data['Timestamp'] = datetime.now(tz=pytz.timezone('Asia/Calcutta'))
         await collection.insert_one(data)
 
     @staticmethod
@@ -22,6 +25,7 @@ class MongoUtil:
     @staticmethod
     async def update(collection: AsyncIOMotorCollection, identifier: Dict, data: Dict):
         logger.info("Updating Data")
+        data['Timestamp'] = datetime.now(tz=pytz.timezone('Asia/Calcutta'))
         await collection.update_one(filter=identifier, update=data)
 
     @staticmethod
