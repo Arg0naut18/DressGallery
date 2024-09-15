@@ -7,7 +7,6 @@ import os
 import uuid
 from src.logging import logger
 from werkzeug.security import generate_password_hash, check_password_hash
-from src.constants import UserUUIDConfig
 
 
 router = APIRouter()
@@ -19,18 +18,26 @@ users_collection = db.get_collection(os.environ["MONGO_USER_COLLECTION"])
 
 @router.post("/register/")
 async def register_user(user: User):
-    user_id = str(uuid.uuid5(UserUUIDConfig.NAMESPACE +
-                  str(uuid.uuid4()), user.username))
-    hashed_password = generate_password_hash(user.password)
-
-    updated_user = User(user_id=user_id, password=hashed_password,
-                        username=user.username, email=user.email, phone_number=user.phone_number)
+    user_id = str(uuid.uuid5(uuid.NAMESPACE_URL, user.username))
     try:
-        await MongoUtil.insert(users_collection, updated_user.model_dump())
-        return JSONResponse(status_code=200, content=user_id)
+        users = await MongoUtil.find(
+            users_collection, {"user_id": user_id})
+        if (len(users) > 0):
+            return JSONResponse(status_code=409, content="Username already exists!")
     except Exception as e:
         logger.error(error_log(e))
         return JSONResponse(status_code=500, content=error_log(e))
+    else:
+        hashed_password = generate_password_hash(user.password)
+
+        updated_user = User(user_id=user_id, password=hashed_password,
+                            username=user.username, email=user.email, phone_number=user.phone_number)
+        try:
+            await MongoUtil.insert(users_collection, updated_user.model_dump())
+            return JSONResponse(status_code=200, content=user_id)
+        except Exception as e:
+            logger.error(error_log(e))
+            return JSONResponse(status_code=500, content=error_log(e))
 
 
 @router.post("/login/")
@@ -41,11 +48,11 @@ async def authenticate_user(user: UserData):
             users_collection, curr_user.model_dump(exclude_unset=True, exclude_none=True))
         user_found = (len(users) > 0)
         if not user_found:
-            return JSONResponse(status_code=402, content="User not found!")
+            return JSONResponse(status_code=404, content="User not found!")
         for iter_user in users:
             if check_password_hash(iter_user["password"], user.password):
                 return JSONResponse(status_code=200, content=iter_user["user_id"])
-        return JSONResponse(status_code=402, content="User not found!")
+        return JSONResponse(status_code=404, content="User not found!")
     except Exception as e:
         logger.error(error_log(e))
         return JSONResponse(status_code=500, content=error_log(e))
