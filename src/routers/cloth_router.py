@@ -43,6 +43,7 @@ def format_inputs(name, color, tags, brand, year_of_purchase, user_id):
 async def add_dress(cloth: Cloth, user_id: str = Depends(get_current_user, use_cache=True)):
     try:
         cloth.user_id = user_id
+        logger.info("A cloth add request received.")
         await MongoUtil.insert(mongo_collection, cloth.model_dump())
         return JSONResponse(status_code=201, content="Success!")
     except Exception as e:
@@ -52,6 +53,7 @@ async def add_dress(cloth: Cloth, user_id: str = Depends(get_current_user, use_c
 
 @router.get("/view/")
 async def view_dress(name: str = None, color: str = None, tags: str = None, year_of_purchase: int = None, brand: str = None, user_id: str = Depends(get_current_user, use_cache=True)):
+    logger.info("A user is viewing their dorm.")
     filter_dict = format_inputs(
         name, color, tags, brand, year_of_purchase, user_id)
     try:
@@ -64,6 +66,7 @@ async def view_dress(name: str = None, color: str = None, tags: str = None, year
 
 @router.put("/update/{dress_id}")
 async def update_dress(dress_id: str, cloth: Cloth, user_id: str = Depends(get_current_user)):
+    logger.info("An update outfit request received.")
     updated_dress = cloth.model_dump()
     try:
         await MongoUtil.update(mongo_collection, {'_id': ObjectId(dress_id)}, updated_dress)
@@ -75,6 +78,7 @@ async def update_dress(dress_id: str, cloth: Cloth, user_id: str = Depends(get_c
 
 @router.delete("/delete/{dress_id}")
 async def delete_dress(dress_id: str, user_id: str = Depends(get_current_user)):
+    logger.info("A delete outfit request received.")
     try:
         await MongoUtil.delete(mongo_collection, {'_id': ObjectId(dress_id)})
         return JSONResponse(status_code=200, content="Deleted successfully!")

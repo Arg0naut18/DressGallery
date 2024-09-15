@@ -5,3 +5,4 @@
 *.yml
 **/dockerfile
 vercel.json
+.vercel
