@@ -1,12 +1,10 @@
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from src.routers.cloth_router import router as cloth_router
 from src.routers.user_router import router as user_router
 from dotenv import load_dotenv
-import uvicorn
-import os
-from src.logging import logger, logger_config
+from src.logging import logger
 
 
 load_dotenv()
@@ -31,7 +29,6 @@ async def ping():
     return JSONResponse(content="Ping successful!", status_code=200)
 
 
-if __name__ == "__main__":
-    logger.info(f"Serving on {os.environ['HOST']:{os.environ['PORT']}}")
-    uvicorn.run(app, host=os.getenv('HOST', '0.0.0.0'),
-                port=int(os.getenv('PORT', 8000)), env_file=".env", use_colors=True, log_config=logger_config)
+@app.get("/", response_class=RedirectResponse)
+async def root():
+    return "/ping"

@@ -4,3 +4,4 @@
 *.txt
 *.yml
 **/dockerfile
+vercel.json
